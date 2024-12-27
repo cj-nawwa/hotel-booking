@@ -34,7 +34,7 @@ public class User {
     }
 
     public void setRole(String role) {
-        if (role.equalsIgnoreCase("Guest") || role.equalsIgnoreCase("Admin")) {
+        if (role.equals("Guest") || role.equals("Admin")) {
             this.role = role;
         } else {
             System.out.println("Invalid role. Role must be 'customer' or 'admin'.");
