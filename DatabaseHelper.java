@@ -120,10 +120,29 @@ class Manager extends databaseFunctions  {
        }
    }
 }
+/** Structure intended: 
+1.Users can log in or register as admins or guests.
+2.Guests can view available rooms and make bookings.
+3.Admins can manage room details and bookings.
+4.The system must link users, rooms, and bookings.
 
+Execution
+1.Database Design
+Users Table: Stores user credentials (username, password, role - admin/guest).
+Rooms Table: Stores room details (room_number, room_type, price_per_night, availability).
+Bookings Table: Links users and rooms with booking details (user_id, room_id, start_date, end_date, total_price).
 
-
-
+2.Key Functionalities
+User Authentication:
+Register: Users create accounts with roles (admin or guest).
+Login: Validate credentials to access the system.
+Room Management:
+Guests: View available rooms, filter by date/type, and book rooms.
+Admins: Add, update, or delete room details.
+Booking Management:
+Link users to their bookings and calculate total price based on room and duration.
+Prevent overlapping bookings for the same room.
+   **/
 
 
 
