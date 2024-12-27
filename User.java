@@ -34,8 +34,8 @@ public class User {
     }
 
     public void setRole(String role) {
-        if (role.equalsIgnoreCase("customer") || role.equalsIgnoreCase("admin")) {
-            this.role = role.toLowerCase();
+        if (role.equalsIgnoreCase("Guest") || role.equalsIgnoreCase("Admin")) {
+            this.role = role;
         } else {
             System.out.println("Invalid role. Role must be 'customer' or 'admin'.");
             // throw new IllegalArgumentException("Invalid role. Role must be 'customer' or 'admin'.");
