@@ -1,22 +1,31 @@
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit; /* apparently we can use this to call for time like month and such
-that when we call it in the main class we can set the date ,month ... by creating an instance.*/ 
-public class Booking {// we will inherit from the class of our need 
-private double bookingId; // basically booking id   
+that when we call it in the main class we can set the date ,month ... by creating an instance.*/
+
+public class Booking {// we will inherit from the class of our need
+
+private String bookingId; // basically booking id
 /* there are probably 2 attributes that we will probably use based on 
  * the implementation of my group members 
  * that is the class room and user 
  */
+private String roomID;
 private LocalDate checkInDate;/* apparently there is local date by java using java.time package 
 *so we will use this to make it easier  
-checked in by the user*/  
+checked in by the user*/
+
 private LocalDate checkOutDate;// same here time package checkout by the user 
 private int numberOfGuests; // total number of guests 
 private double totalPrice;
-private String status; //booking status basically confirmed or not 
-	public Booking(double bookingId,LocalDate checkInDate,LocalDate checkOutDate,
-			int numberOfGuests,double totalPrice,String status ) {
+private String status;
+//booking status basically confirmed or not
+
+private Room[] rooms;
+	public Booking(String bookingId, String roomID,LocalDate checkInDate,LocalDate checkOutDate,
+			int numberOfGuests,double totalPrice, String status ) {
+
 		this.bookingId = bookingId;
+		this.roomID = roomID;
         this.checkInDate = checkInDate;
         this.checkOutDate = checkOutDate;
         this.numberOfGuests = numberOfGuests;
@@ -36,19 +45,20 @@ private String status; //booking status basically confirmed or not
 	               "\nStatus: " + status);
 	}
 	public void bookRoom() {
+		rooms = new Room[]{
+				new Room("007", "VIP",99.9,false,3),
+				new Room("202", "Economic", 29.9,false, 1),
+				new Room("303", "Luxury",59.9, false, 2)
+		};
 	    switch (this.status) {
 	        case "Available":
-	            this.status = "Booked"; // status is now booked 
-	            System.out.println("Room successfully booked.");
+	            this.status = "Booked"; // status is now booked
 	            break;
 	        case "Booked":
-	            System.out.println("Room is already booked.");
 	            break;
 	        case "Canceled":
-	            System.out.println("Booking cannot be made because it was previously canceled.");
 	            break;
 	        default:
-	            System.out.println("Currently the room is  "+this.status);
 	            break;
 	    }
 	}
@@ -69,11 +79,17 @@ private String status; //booking status basically confirmed or not
 	}
 	
 	// set and get methods , still not finished some attributed might get removed for now only 
-	public void setbookingId(double bookingId) {
+	public void setbookingId(String bookingId) {
 		this.bookingId = bookingId;
 	}
-	public double getbookingId() {
+	public String getbookingId() {
 		return bookingId;
+	}
+	public void setRoomID(String roomID){
+		this. roomID = roomID;
+	}
+	public String getRoomID(){
+		return roomID;
 	}
 	public void setstatus(String status) {
 		this.status= status;
