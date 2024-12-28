@@ -1,5 +1,5 @@
 public class Room {
-    private String roomNumber;
+    private String roomID;
     private String roomType;
     private double pricePerNight;
     private boolean occupied;
@@ -8,8 +8,8 @@ public class Room {
     private boolean isAvailable = true;
 
     // Constructor
-    public Room(String roomNumber, String roomType, double pricePerNight, boolean occupied, int bedRooms) {
-        this.roomNumber = roomNumber;
+    public Room(String roomID, String roomType, double pricePerNight, boolean occupied, int bedRooms) {
+        this.roomID = roomID;
         this.roomType = roomType;
         this.pricePerNight = pricePerNight;
         this.occupied = occupied;
@@ -17,12 +17,12 @@ public class Room {
     }
 
     // Getter and Setter for roomNumber
-    public String getRoomNumber() {
-        return roomNumber;
+    public String getRoomID() {
+        return roomID;
     }
 
     public void setRoomNumber(String roomNumber) {
-        this.roomNumber = roomNumber;
+        this.roomID = roomID;
     }
 
     // Getter and Setter for roomType
