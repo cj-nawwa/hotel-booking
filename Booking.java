@@ -122,8 +122,8 @@ private Room[] rooms;
 		return numberOfGuests;
 	}
 // this one will be used to save data as CSV more efficiently 
-   @Override
+      @Override
     public String toString() {
-        return String.format("%s,%s,%.2f,%b,%d", roomID, roomType, pricePerNight, occupied, bedRooms);
+        return String.format("%s,%s,%s,%s,%d,%.2f,%s", bookingID, roomID, checkin, checkout, numOfAssociates, totalPrice, status);
     }
 }
