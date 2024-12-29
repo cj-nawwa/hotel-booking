@@ -75,9 +75,7 @@ public class Room {
         return isAvailable;
     }
 
-    public void setAvailable(User user, boolean available) {
-        if (user.getRole().equals("admin")) {
+    public void setAvailable(boolean available) {
             this.isAvailable = available;
-        }
     }
 }
