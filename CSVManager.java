@@ -5,6 +5,7 @@ public class CSVManager {
 
     private static final String ROOM_FILE = "rooms.csv";
     private static final String BOOKING_FILE = "bookings.csv";
+			private static final String USERS_FILE = "users.csv";
 
     // Save Rooms to CSV
     public static void saveRooms(List<Room> rooms) {
