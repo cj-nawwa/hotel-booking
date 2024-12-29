@@ -192,3 +192,30 @@ public class DatabaseHelper {
         }
     }
 }
+/*
+the SQL code used to create the tables and link them with eachother using foreign keys in postgreSQL that were linked to the database class is as follows 
+Users table
+CREATE TABLE users (
+    user_id SERIAL PRIMARY KEY,
+    username VARCHAR(50) UNIQUE NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    role VARCHAR(10) CHECK (role IN ('admin', 'guest')) NOT NULL);
+Rooms table
+CREATE TABLE rooms (
+    room_id SERIAL PRIMARY KEY,
+    room_number VARCHAR(10) UNIQUE NOT NULL,
+    room_type VARCHAR(50) NOT NULL,
+    price_per_night DECIMAL(10, 2) NOT NULL,
+    availability BOOLEAN DEFAULT TRUE);
+Bookings table
+CREATE TABLE bookings (
+    booking_id SERIAL PRIMARY KEY,
+    user_id INT NOT NULL,
+    room_id INT NOT NULL,
+    start_date DATE NOT NULL,
+    end_date DATE NOT NULL,
+    total_price DECIMAL(10, 2) NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
+    FOREIGN KEY (room_id) REFERENCES rooms(room_id) ON DELETE CASCADE);
+*/
+    
