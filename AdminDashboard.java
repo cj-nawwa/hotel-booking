@@ -99,8 +99,8 @@ private void updateRoomGrid() {
                 double price = Double.parseDouble(priceField.getText());
                 String roomType = (String) roomTypeBox.getSelectedItem();
                 ////
-///need changes here
-                rooms.add(new Room("",roomNumber, price, roomType));
+///need changes here and we have 1 bed room for now (by default)
+                rooms.add(new Room(roomNumber,roomType, price, false, 1));
                 updateRoomGrid();
                 addDialog.dispose();
             } catch (NumberFormatException ex) {
@@ -138,8 +138,8 @@ private void updateRoomGrid() {
         JButton saveButton = new JButton("Save Changes");
         saveButton.addActionListener(e -> {
             try {
-                room.setRoomNumber(nameField.getText());
-                room.setPricePerNight(Double.parseDouble(priceField.getText()));
+                room.setRoomID(nameField.getText());
+                room.setpricePerNight(Double.parseDouble(priceField.getText()));
                 room.setRoomType((String) roomTypeBox.getSelectedItem());
                 room.setAvailable(availabilityCheck.isSelected());
                 updateRoomGrid();
