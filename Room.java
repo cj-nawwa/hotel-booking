@@ -78,4 +78,8 @@ public class Room {
     public void setAvailable(boolean available) {
             this.isAvailable = available;
     }
+ @Override
+    public String toString() {
+        return String.format("%s,%s,%.2f,%b,%d", roomID, roomType, pricePerNight, occupied, bedRooms);
+    }
 }
