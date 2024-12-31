@@ -203,26 +203,7 @@ public class DatabaseHelper {
         return lines;
     }
 
-    public static void main(String[] args) {
-        DatabaseHelper helper = new DatabaseHelper();
 
-        // Test Managers
-        Manager user = helper.new Manager("john_doe", "password123", "customer");
-        user.create();
-        System.out.println("Users: " + user.readAll());
-        user.password = "new_password";
-        user.update();
-        user.delete();
-
-        RoomManager room = helper.new RoomManager("101", "Deluxe", 150.0);
-        room.create();
-        System.out.println("Rooms: " + room.readAll());
-
-        BookingManager booking = helper.new BookingManager("1", "101", "2023-01-01", "2023-01-05");
-        booking.create();
-        System.out.println("Bookings: " + booking.readAll());
-    }
-}
 /*
 the SQL code used to create the tables and link them with eachother using foreign keys in postgreSQL that were linked to the database class is as follows 
 Users table
