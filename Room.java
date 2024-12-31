@@ -1,214 +1,129 @@
+package Hotel;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
-import java.util.Arrays;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
-public class RoomSelectionApp {
-
-    private JFrame frame;
-    private CardLayout cardLayout;
-    private JPanel mainPanel;
-    private int pageIndex = 0;
-    private JButton nextButton;
-
-    // Room types and their descriptions
-    private final String[] roomTypes = {"Deluxe", "Standard", "Suite", "Economy", "Penthouse", "Single"};
-    private final String[] roomDescriptions = {
-            "Deluxe room with king-sized bed and city view.",
-            "Standard room with queen-sized bed and garden view.",
-            "Luxury suite with separate living area and balcony.",
-            "Affordable economy room with basic amenities.",
-            "Exclusive penthouse with panoramic views and private pool.",
-            "Cozy single room perfect for solo travelers."
-    };
-
-    // Room IDs for each room type
-    private final String[][] roomDetails = {
-            {"101", "102", "103"},
-            {"201", "202", "203"},
-            {"301", "302", "303"},
-            {"401", "402", "403"},
-            {"501", "502", "503"},
-            {"601", "602", "603"}
-    };
-
-    // Images (file names) corresponding to the rooms
-    private final String[][] roomImages = {
-            {"deluxe1.jpg", "deluxe2.jpg", "deluxe3.jpg"},
-            {"standard1.jpg", "standard2.jpg", "standard3.jpg"},
-            {"suite1.jpg", "suite2.jpg", "suite3.jpg"},
-            {"economy1.jpg", "economy2.jpg", "economy3.jpg"},
-            {"penthouse1.jpg", "penthouse2.jpg", "penthouse3.jpg"},
-            {"single1.jpg", "single2.jpg", "single3.jpg"}
-    };
-
-    // Additional services checkboxes and prices
-    private final String[] serviceNames = {"WiFi", "Breakfast", "Airport Pickup"};
-    private final double[] servicePrices = {10.0, 20.0, 30.0};
-    private JCheckBox[] serviceCheckBoxes;
-    private JLabel totalPriceLabel;
-
+public class Room extends JFrame {
+    private JTextArea descriptionArea;
+    private JLabel imageLabel;
+    private JButton confirmButton;
     private String selectedRoom;
-    private double roomBasePrice;
 
-    public RoomSelectionApp() {
-        frame = new JFrame("Room Selection App");
-        cardLayout = new CardLayout();
-        mainPanel = new JPanel(cardLayout);
+    public Room() {
+        setTitle("Room Selection");
+        setSize(400, 450);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLocationRelativeTo(null);
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.Y_AXIS));
 
-        // Initialize the next button
-        nextButton = new JButton("Next");
-        nextButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                goToNextPage();
-            }
-        });
+        String[] roomTypes = {
+            "Single Room",
+            "Double Room",
+            "Deluxe Room",
+            "Family Room",
+            "Junior Suite",
+            "Executive Suite",
+            "Accessible Room",
+            "Economy Room"
+        };
 
-        // Page 1: Room Types with Descriptions
-        JPanel page1 = new JPanel();
-        page1.setLayout(new GridLayout(roomTypes.length + 1, 1)); // Adding extra space for next button
+        String[] roomDescriptions = {
+            "One bed for a single guest.\nPrice: 7000 Birr per night.",
+            "One double bed or two single beds for two guests.\nPrice: 12,000 Birr per night.",
+            "Upgraded decor and amenities for two guests.\nPrice: 18,000 Birr per night.",
+            "Larger room with multiple beds for families.\nPrice: 25,000 Birr per night.",
+            "Spacious room with a sitting area for added comfort.\nPrice: 3000 Birr per night.",
+            "Separate living and sleeping areas with luxury features.\nPrice: 5000 Birr per night.",
+            "Designed for guests with disabilities, featuring accessibility amenities.\nPrice: 1000 Birr per night.",
+            "Basic room with minimal amenities for budget travelers.\nPrice: 500 Birr per night."
+        };
+
+        ImageIcon[] roomImages = {
+            new ImageIcon("single.jpg"),
+            new ImageIcon("double.jpg"),
+            new ImageIcon("deluxe.jpg"),
+            new ImageIcon("family.jpg"),
+            new ImageIcon("junior_suite.jpg"),
+            new ImageIcon("executive.jpg"),
+            new ImageIcon("accessible.jpg"),
+            new ImageIcon("econmy.jpg")
+        };
+
         for (int i = 0; i < roomTypes.length; i++) {
-            final int index = i;  // Make index final to be used inside lambda
-            JButton roomButton = new JButton(roomTypes[i] + ": " + roomDescriptions[i]);
+            JButton roomButton = new JButton(roomTypes[i]);
+            roomButton.setFocusPainted(false);
+            roomButton.setBorder(BorderFactory.createRaisedBevelBorder());
+
+            final String description = roomDescriptions[i];
+            final ImageIcon imageIcon = roomImages[i];
+            final String roomType = roomTypes[i];
+
             roomButton.addActionListener(new ActionListener() {
-                @Override
                 public void actionPerformed(ActionEvent e) {
-                    selectRoomType(index);
+                    displayRoomDetails(description, imageIcon, roomType);
                 }
             });
-            page1.add(roomButton);
-        }
-        page1.add(nextButton);
 
-        // Page 2: List of Rooms for Selected Type
-        JPanel page2 = new JPanel();
-        page2.setLayout(new GridLayout(4, 2));  // Adjust layout as per the number of rooms
-        page2.add(nextButton);  // Next button at the bottom
-
-        // Page 3: Additional Services and Grand Total
-        JPanel page3 = new JPanel();
-        page3.setLayout(new BoxLayout(page3, BoxLayout.Y_AXIS));  // Vertical layout for services
-        serviceCheckBoxes = new JCheckBox[servicePrices.length];
-        for (int i = 0; i < servicePrices.length; i++) {
-            serviceCheckBoxes[i] = new JCheckBox(serviceNames[i] + " - $" + servicePrices[i]);
-            serviceCheckBoxes[i].addItemListener(new ItemListener() {
-                @Override
-                public void itemStateChanged(ItemEvent e) {
-                    updateTotalPrice();
-                }
-            });
-            page3.add(serviceCheckBoxes[i]);
+            roomButton.setToolTipText("Select " + roomTypes[i]);
+            buttonPanel.add(roomButton);
+            buttonPanel.add(Box.createRigidArea(new Dimension(0, 10)));
         }
 
-        totalPriceLabel = new JLabel("Total Price: $0.00");
-        page3.add(totalPriceLabel);
+        JPanel detailsPanel = new JPanel();
+        detailsPanel.setLayout(new BorderLayout());
 
-        // Book button to finalize the booking
-        JButton bookButton = new JButton("Book Room");
-        bookButton.addActionListener(new ActionListener() {
-            @Override
+        descriptionArea = new JTextArea();
+        descriptionArea.setEditable(false);
+        descriptionArea.setLineWrap(true);
+        descriptionArea.setWrapStyleWord(true);
+        descriptionArea.setFont(new Font("Arial", Font.PLAIN, 14));
+
+        JScrollPane scrollPane = new JScrollPane(descriptionArea);
+        scrollPane.setPreferredSize(new Dimension(350, 120));
+
+        imageLabel = new JLabel();
+        imageLabel.setHorizontalAlignment(JLabel.CENTER);
+        imageLabel.setPreferredSize(new Dimension(350, 150));
+
+        detailsPanel.add(scrollPane, BorderLayout.CENTER);
+        detailsPanel.add(imageLabel, BorderLayout.SOUTH);
+
+        JPanel confirmationPanel = new JPanel();
+        confirmButton = new JButton("Confirm Booking");
+        confirmButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                bookRoom();
+                if (selectedRoom != null) {
+                    JOptionPane.showMessageDialog(Room.this, "You have booked: " + selectedRoom);
+                } else {
+                    JOptionPane.showMessageDialog(Room.this, "Please select a room first.");
+                }
             }
         });
-        page3.add(bookButton);
-        page3.add(nextButton);  // Next button at the bottom
+        confirmationPanel.add(confirmButton);
 
-        // Add pages to the main panel (for CardLayout)
-        mainPanel.add(page1, "Page 1");
-        mainPanel.add(page2, "Page 2");
-        mainPanel.add(page3, "Page 3");
-
-        // Frame setup
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(500, 500);
-        frame.setContentPane(mainPanel);
-        frame.setVisible(true);
+        add(buttonPanel, BorderLayout.WEST);
+        add(detailsPanel, BorderLayout.CENTER);
+        add(confirmationPanel, BorderLayout.SOUTH);
     }
 
-    // Handle going to the next page
-    private void goToNextPage() {
-        if (pageIndex < 2) {
-            pageIndex++;
-            cardLayout.next(mainPanel);
-        }
+    private void displayRoomDetails(String description, ImageIcon icon, String roomType) {
+        descriptionArea.setText(description);
+        descriptionArea.setCaretPosition(0);
+        displayImage(icon);
+        selectedRoom = roomType;
     }
 
-    // Handle room type selection
-    private void selectRoomType(int index) {
-        selectedRoom = roomTypes[index];
-        roomBasePrice = 100.0;  // Base room price (for simplicity)
-
-        // Move to Page 2
-        JPanel page2 = (JPanel) mainPanel.getComponent(1);
-
-        // Clear the existing rooms from Page 2
-        page2.removeAll();
-
-        // Display rooms for the selected type on Page 2
-        for (int i = 0; i < roomDetails[index].length; i++) {
-            final int roomIndex = i;
-            JButton roomButton = new JButton("Room " + roomDetails[index][i]);
-            roomButton.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    showRoomDetails(index, roomIndex);
-                }
-            });
-            page2.add(roomButton);
-        }
-
-        // Revalidate and repaint Page 2
-        page2.revalidate();
-        page2.repaint();
-
-        // Move to Page 2
-        goToNextPage();
-    }
-
-    // Show selected room details (for simplicity, just print details)
-    private void showRoomDetails(int roomTypeIndex, int roomIndex) {
-        String selectedRoom = roomDetails[roomTypeIndex][roomIndex];
-        JOptionPane.showMessageDialog(frame, "You selected " + selectedRoom + " from the " +
-                roomTypes[roomTypeIndex] + " type.");
-    }
-
-    // Update the total price based on selected services
-    private void updateTotalPrice() {
-        double totalPrice = roomBasePrice;  // Base room price
-        for (JCheckBox checkBox : serviceCheckBoxes) {
-            if (checkBox.isSelected()) {
-                int serviceIndex = Arrays.asList(serviceCheckBoxes).indexOf(checkBox);
-                totalPrice += servicePrices[serviceIndex];
-            }
-        }
-        totalPriceLabel.setText("Total Price: $" + totalPrice);
-    }
-
-    // Handle room booking process
-    private void bookRoom() {
-        double totalPrice = roomBasePrice;  // Start with the base room price
-        StringBuilder servicesSelected = new StringBuilder("Selected Services: ");
-        for (JCheckBox checkBox : serviceCheckBoxes) {
-            if (checkBox.isSelected()) {
-                int serviceIndex = Arrays.asList(serviceCheckBoxes).indexOf(checkBox);
-                totalPrice += servicePrices[serviceIndex];
-                servicesSelected.append(serviceNames[serviceIndex]).append(" ");
-            }
-        }
-
-        JOptionPane.showMessageDialog(frame, "Room booked successfully!\n" +
-                "Room: " + selectedRoom + "\n" +
-                servicesSelected.toString() + "\nTotal Price: $" + totalPrice);
+    private void displayImage(ImageIcon icon) {
+        Image img = icon.getImage().getScaledInstance(150, 100, Image.SCALE_SMOOTH);
+        imageLabel.setIcon(new ImageIcon(img));
     }
 
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                new RoomSelectionApp();
-            }
+        SwingUtilities.invokeLater(() -> {
+            Room roomSelection = new Room();
+            roomSelection.setVisible(true);
         });
     }
 }
