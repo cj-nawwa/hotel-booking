@@ -1,88 +1,54 @@
-public class Room {
-    private String roomID;
-    private String roomType;
-    private double pricePerNight;
-    private boolean occupied;
-    private int bedRooms;
-    private String[] tags;
-    private boolean isAvailable = true;
+import java.util.*;
 
-    // Constructor
-    public Room(String roomID, String roomType, double pricePerNight, boolean occupied, int bedRooms) {
-        this.roomID = roomID;
-        this.roomType = roomType;
-        this.pricePerNight = pricePerNight;
-        this.occupied = occupied;
-        this.bedRooms = bedRooms;
+public class RoomManager {
+
+    private RoomDataHandler dataHandler;
+
+    public RoomManager(RoomDataHandler handler) {
+        this.dataHandler = handler;
     }
 
-    // Getter and Setter for roomNumber
-    public String getRoomID() {
-        return roomID;
+    public List<String[]> getAvailableRooms() {
+        List<String[]> allRooms = dataHandler.fetchAllRooms();
+        List<String[]> availableRooms = new ArrayList<>();
+
+        for (String[] room : allRooms) {
+            boolean isAvailable = Boolean.parseBoolean(room[4]);
+            if (isAvailable) {
+                availableRooms.add(room);
+            }
+        }
+
+        return availableRooms;
     }
 
-    public void setRoomNumber(String roomNumber) {
-        this.roomID = roomID;
-    }
+    public static void main(String[] args) {
+        // Example usage with a mock handler
+        RoomDataHandler mockHandler = new RoomDataHandler() {
+            @Override
+            public List<String[]> fetchAllRooms() {
+                // Mock data for demonstration
+                List<String[]> rooms = new ArrayList<>();
+                rooms.add(new String[]{"101", "Single", "100.0", "1", "true"});
+                rooms.add(new String[]{"102", "Double", "150.0", "2", "false"});
+                rooms.add(new String[]{"103", "Suite", "300.0", "3", "true"});
+                return rooms;
+            }
+        };
 
-    // Getter and Setter for roomType
-    public String getRoomType() {
-        return roomType;
-    }
+        RoomManager manager = new RoomManager(mockHandler);
+        List<String[]> availableRooms = manager.getAvailableRooms();
 
-    public void setRoomType(String roomType) {
-        this.roomType = roomType;
-    }
-
-    // Getter and Setter for pricePerNight
-    public double getPricePerNight() {
-        return pricePerNight;
-    }
-
-    public void setPricePerNight(double pricePerNight) {
-        this.pricePerNight = pricePerNight;
-    }
-
-    // Getter and Setter for occupied
-    public boolean isOccupied() {
-        return occupied;
-    }
-
-    public void setOccupied(boolean occupied) {
-        this.occupied = occupied;
-    }
-
-    // Getter and Setter for bedRooms
-    public int getBedRooms() {
-        return bedRooms;
-    }
-
-    public void setBedRooms(int bedRooms) {
-        this.bedRooms = bedRooms;
-    }
-
-    // Getter and Setter for tags
-    public String[] getTags() {
-        return tags;
-    }
-
-    public void setTags(String[] tags) {
-        this.tags = tags;
-    }
-
-    // Getter and Setter for isAvailable
-    public boolean isAvailable() {
-        return isAvailable;
-    }
-
-    public void setAvailable(boolean available) {
-            this.isAvailable = available;
-    }
- @Override
-    public String toString() {
-        return String.format("%s,%s,%.2f,%b,%d", roomID, roomType, pricePerNight, occupied, bedRooms);
+        for (String[] room : availableRooms) {
+            System.out.println("Available Room: " + Arrays.toString(room));
+        }
     }
 }
+
+interface RoomDataHandler {
+    List<String[]> fetchAllRooms();
+}
+
 /*
 Single Room
 One bed for a single guest.
