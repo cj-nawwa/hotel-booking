@@ -1,14 +1,25 @@
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.List;
+
 public class User {
     // Attributes
     private String username;
     private String password;
     private String role; // Can be "customer" or "admin"
 
+    // Admin credentials
+    private static String adminUserName = "admin";
+    private static String adminUserPassword = "admin";
+
     // Constructor
     public User(String username, String password, String role) {
         this.username = username;
         this.password = password;
-        setRole(role); // Validates and sets the role
+        setRole(); // Automatically sets the role based on credentials
     }
 
     // Getters
@@ -33,20 +44,20 @@ public class User {
         this.password = password;
     }
 
-    public void setRole(String role) {
-        if (role.equals("Guest") || role.equals("Admin")) {
-            this.role = role;
+    public void setRole() {
+        // Check if the credentials match the admin
+        if (this.username.equals(adminUserName) && this.password.equals(adminUserPassword)) {
+            this.role = "Admin";
         } else {
-            System.out.println("Invalid role. Role must be 'customer' or 'admin'.");
-            // throw new IllegalArgumentException("Invalid role. Role must be 'customer' or 'admin'.");
+            this.role = "Guest";
         }
     }
 
     // Method to register a new user
-    public void register(String username, String password, String role) {
+    public void register(String username, String password) {
         this.username = username;
         this.password = password;
-        setRole(role); // Validates and sets the role
+        setRole(); // Automatically sets the role based on credentials
         System.out.println("User registered successfully!");
     }
 
@@ -62,12 +73,7 @@ public class User {
     }
 }
 
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.List;
+
 
 public class LoginPage {
 
