@@ -44,9 +44,10 @@ public class AdminDashboard {
         roomManagementButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // Navigate to Room Management Page
-                JOptionPane.showMessageDialog(frame, "Redirecting to Room Management Page.");
-                // Add logic to connect to Room Management
+                SwingUtilities.invokeLater(() -> {
+                    Room roomSelection = new Room();
+                    roomSelection.setVisible(true);
+                });
             }
         });
         buttonPanel.add(roomManagementButton);
@@ -80,5 +81,4 @@ public class AdminDashboard {
     }
 }
 
-
-
+// Room class would be connected and managed externally.
