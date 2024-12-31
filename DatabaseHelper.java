@@ -1,21 +1,23 @@
-import java.sql.*;
+import java.io.*;
+import java.util.*;
+import java.util.function.Predicate;
 
 public class DatabaseHelper {
 
-    private static final String URL = "jdbc:postgresql://localhost:5432/hotel";
-    private static final String USER = "postgres";
-    private static final String PASSWORD = "yourpassword";
+    // File paths for CSVs
+    private static final String USERS_FILE = "users.csv";
+    private static final String ROOMS_FILE = "rooms.csv";
+    private static final String BOOKINGS_FILE = "bookings.csv";
 
-    public static Connection getConnection() throws SQLException {
-        return DriverManager.getConnection(URL, USER, PASSWORD);
-    }
-
+    // Abstract base class for database functions
     abstract class DatabaseFunctions {
-        abstract void create(); 
+        abstract void create();
         abstract void update();
         abstract void delete();
+        abstract List<String> readAll();
     }
 
+    // Manager class (User management)
     class Manager extends DatabaseFunctions {
         private String username;
         private String password;
@@ -29,47 +31,34 @@ public class DatabaseHelper {
 
         @Override
         void create() {
-            try (Connection conn = getConnection()) {
-                String query = "INSERT INTO users (username, password, role) VALUES (?, ?, ?)";
-                try (PreparedStatement stmt = conn.prepareStatement(query)) {
-                    stmt.setString(1, username);
-                    stmt.setString(2, password);
-                    stmt.setString(3, role);
-                    stmt.executeUpdate();
-                }
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
+            appendToFile(USERS_FILE, String.join(",", username, password, role));
         }
 
         @Override
         void update() {
-            try (Connection conn = getConnection()) {
-                String query = "UPDATE users SET password = ? WHERE username = ?";
-                try (PreparedStatement stmt = conn.prepareStatement(query)) {
-                    stmt.setString(1, password);
-                    stmt.setString(2, username);
-                    stmt.executeUpdate();
+            modifyFile(USERS_FILE, line -> {
+                String[] fields = line.split(",");
+                if (fields[0].equals(username)) {
+                    fields[1] = password; // Update password
+                    fields[2] = role; // Ensure role is updated as well
+                    return String.join(",", fields);
                 }
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
+                return line;
+            });
         }
 
         @Override
         void delete() {
-            try (Connection conn = getConnection()) {
-                String query = "DELETE FROM users WHERE username = ?";
-                try (PreparedStatement stmt = conn.prepareStatement(query)) {
-                    stmt.setString(1, username);
-                    stmt.executeUpdate();
-                }
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
+            removeFromFile(USERS_FILE, line -> line.split(",")[0].equals(username));
+        }
+
+        @Override
+        List<String> readAll() {
+            return readFile(USERS_FILE);
         }
     }
 
+    // Room Manager class
     class RoomManager extends DatabaseFunctions {
         private String roomNumber;
         private String roomType;
@@ -83,55 +72,42 @@ public class DatabaseHelper {
 
         @Override
         void create() {
-            try (Connection conn = getConnection()) {
-                String query = "INSERT INTO rooms (room_number, room_type, price_per_night) VALUES (?, ?, ?)";
-                try (PreparedStatement stmt = conn.prepareStatement(query)) {
-                    stmt.setString(1, roomNumber);
-                    stmt.setString(2, roomType);
-                    stmt.setDouble(3, price);
-                    stmt.executeUpdate();
-                }
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
+            appendToFile(ROOMS_FILE, String.join(",", roomNumber, roomType, String.valueOf(price)));
         }
 
         @Override
         void update() {
-            try (Connection conn = getConnection()) {
-                String query = "UPDATE rooms SET price_per_night = ? WHERE room_number = ?";
-                try (PreparedStatement stmt = conn.prepareStatement(query)) {
-                    stmt.setDouble(1, price);
-                    stmt.setString(2, roomNumber);
-                    stmt.executeUpdate();
+            modifyFile(ROOMS_FILE, line -> {
+                String[] fields = line.split(",");
+                if (fields[0].equals(roomNumber)) {
+                    fields[1] = roomType;
+                    fields[2] = String.valueOf(price); // Update price
+                    return String.join(",", fields);
                 }
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
+                return line;
+            });
         }
 
         @Override
         void delete() {
-            try (Connection conn = getConnection()) {
-                String query = "DELETE FROM rooms WHERE room_number = ?";
-                try (PreparedStatement stmt = conn.prepareStatement(query)) {
-                    stmt.setString(1, roomNumber);
-                    stmt.executeUpdate();
-                }
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
+            removeFromFile(ROOMS_FILE, line -> line.split(",")[0].equals(roomNumber));
+        }
+
+        @Override
+        List<String> readAll() {
+            return readFile(ROOMS_FILE);
         }
     }
 
+    // Booking Manager class
     class BookingManager extends DatabaseFunctions {
-        private int userId;
-        private int roomId;
+        private String userId;
+        private String roomId;
         private String startDate;
         private String endDate;
         private double totalPrice;
 
-        public BookingManager(int userId, int roomId, String startDate, String endDate) {
+        public BookingManager(String userId, String roomId, String startDate, String endDate) {
             this.userId = userId;
             this.roomId = roomId;
             this.startDate = startDate;
@@ -145,51 +121,106 @@ public class DatabaseHelper {
 
         @Override
         void create() {
-            try (Connection conn = getConnection()) {
-                String query = "INSERT INTO bookings (user_id, room_id, start_date, end_date, total_price) VALUES (?, ?, ?, ?, ?)";
-                try (PreparedStatement stmt = conn.prepareStatement(query)) {
-                    stmt.setInt(1, userId);
-                    stmt.setInt(2, roomId);
-                    stmt.setString(3, startDate);
-                    stmt.setString(4, endDate);
-                    stmt.setDouble(5, totalPrice);
-                    stmt.executeUpdate();
-                }
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
+            appendToFile(BOOKINGS_FILE, String.join(",", userId, roomId, startDate, endDate, String.valueOf(totalPrice)));
         }
 
         @Override
         void update() {
-            try (Connection conn = getConnection()) {
-                String query = "UPDATE bookings SET start_date = ?, end_date = ?, total_price = ? WHERE user_id = ? AND room_id = ?";
-                try (PreparedStatement stmt = conn.prepareStatement(query)) {
-                    stmt.setString(1, startDate);
-                    stmt.setString(2, endDate);
-                    stmt.setDouble(3, totalPrice);
-                    stmt.setInt(4, userId);
-                    stmt.setInt(5, roomId);
-                    stmt.executeUpdate();
+            modifyFile(BOOKINGS_FILE, line -> {
+                String[] fields = line.split(",");
+                if (fields[0].equals(userId) && fields[1].equals(roomId)) {
+                    fields[2] = startDate;
+                    fields[3] = endDate;
+                    fields[4] = String.valueOf(totalPrice); // Update booking details
+                    return String.join(",", fields);
                 }
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
+                return line;
+            });
         }
 
         @Override
         void delete() {
-            try (Connection conn = getConnection()) {
-                String query = "DELETE FROM bookings WHERE user_id = ? AND room_id = ?";
-                try (PreparedStatement stmt = conn.prepareStatement(query)) {
-                    stmt.setInt(1, userId);
-                    stmt.setInt(2, roomId);
-                    stmt.executeUpdate();
-                }
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
+            removeFromFile(BOOKINGS_FILE, line -> {
+                String[] fields = line.split(",");
+                return fields[0].equals(userId) && fields[1].equals(roomId);
+            });
         }
+
+        @Override
+        List<String> readAll() {
+            return readFile(BOOKINGS_FILE);
+        }
+    }
+
+    // Utility methods for file operations
+
+    private void appendToFile(String filePath, String content) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath, true))) {
+            writer.write(content);
+            writer.newLine();
+            System.out.println("Added: " + content);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void modifyFile(String filePath, java.util.function.Function<String, String> modifier) {
+        List<String> lines = readFile(filePath);
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))) {
+            for (String line : lines) {
+                writer.write(modifier.apply(line));
+                writer.newLine();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void removeFromFile(String filePath, Predicate<String> filter) {
+        List<String> lines = readFile(filePath);
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))) {
+            for (String line : lines) {
+                if (!filter.test(line)) {
+                    writer.write(line);
+                    writer.newLine();
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private List<String> readFile(String filePath) {
+        List<String> lines = new ArrayList<>();
+        try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                lines.add(line);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return lines;
+    }
+
+    public static void main(String[] args) {
+        DatabaseHelper helper = new DatabaseHelper();
+
+        // Test Managers
+        Manager user = helper.new Manager("john_doe", "password123", "customer");
+        user.create();
+        System.out.println("Users: " + user.readAll());
+        user.password = "new_password";
+        user.update();
+        user.delete();
+
+        RoomManager room = helper.new RoomManager("101", "Deluxe", 150.0);
+        room.create();
+        System.out.println("Rooms: " + room.readAll());
+
+        BookingManager booking = helper.new BookingManager("1", "101", "2023-01-01", "2023-01-05");
+        booking.create();
+        System.out.println("Bookings: " + booking.readAll());
     }
 }
 /*
