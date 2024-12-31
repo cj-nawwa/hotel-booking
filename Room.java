@@ -83,3 +83,29 @@ public class Room {
         return String.format("%s,%s,%.2f,%b,%d", roomID, roomType, pricePerNight, occupied, bedRooms);
     }
 }
+/*
+Single Room
+One bed for a single guest.
+Price: $70 per night.
+Double Room
+One double bed or two single beds for two guests.
+Price: $120 per night.
+Deluxe Room
+Upgraded decor and amenities for two guests.
+Price: $180 per night.
+Family Room
+Larger room with multiple beds for families.
+Price: $250 per night.
+Junior Suite
+Spacious room with a sitting area for added comfort.
+Price: $300 per night.
+Executive Suite
+Separate living and sleeping areas with luxury features.
+Price: $500 per night.
+Accessible Room
+Designed for guests with disabilities, featuring accessibility amenities.
+Price: $100 per night.
+Economy Room
+Basic room with minimal amenities for budget travelers.
+Price: $50 per night.
+*/
